@@ -16,6 +16,12 @@ use Ratchet\WebSocket\Encoding\ToggleableValidator;
  */
 class WsServer implements HttpServerInterface {
     /**
+     * Protocol header names and values
+     */
+    const HEADER_SEC_WEB_SOCKET_EXTENSIONS = 'Sec-WebSocket-Extensions';
+    const PERMESSAGE_DEFLATE = 'permessage-deflate';
+
+    /**
      * Manage the various WebSocket versions to support
      * @var VersionManager
      * @note May not expose this in the future, may do through facade methods
@@ -123,6 +129,13 @@ class WsServer implements HttpServerInterface {
         }
 
         $response->setHeader('X-Powered-By', \Ratchet\VERSION);
+
+        // If the request specifies extension header for compression support,
+        if (self::PERMESSAGE_DEFLATE == $conn->WebSocket->request->getHeader(self::HEADER_SEC_WEB_SOCKET_EXTENSIONS)) {
+            // then the handshake response must tell that we know to handle it.
+            $response->setHeader(self::HEADER_SEC_WEB_SOCKET_EXTENSIONS, self::PERMESSAGE_DEFLATE);
+            $conn->WebSocket->useDeflate = true;
+        }
         $conn->send((string)$response);
 
         if (101 != $response->getStatusCode()) {

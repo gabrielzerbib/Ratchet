@@ -8,6 +8,10 @@ CHANGELOG
 
 ---
 
+In the current fork (https://github.com/gabrielzerbib/Ratchet) I'm trying to implement Client-to-Server compression (deflate). This is only a very basic proof of concept.
+
+
+
 * 0.3.3 (2015-05-26)
 
 * BF: Framing bug on large messages upon TCP fragmentation
